@@ -23,7 +23,7 @@ jobs:
       - run: |
            ssh remote-docker \<<EOF
                sudo ufw allow 8529
-               docker run -e ARANGO_ROOT_PASSWORD=test123 -p 8529:8529 -d arangodb/arangodb:latest
+               sudo docker run -e ARANGO_ROOT_PASSWORD=mypwd -p 8529:8529 -d --name arangodb-instance arangodb/arangodb
            EOF
       - run:
           name: install dockerize # This is a utility that will attempt to connect to a database, in place of an application for this sample.
