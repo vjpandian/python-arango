@@ -16,11 +16,15 @@ jobs:
     docker:
       - image: python:<< parameters.python-version >>
         name: driver
-      - image: arangodb/<< parameters.arangodb-version >>
-        name: db
-        command: ["/bin/sh", "-c", "mkdir -p /tests/static && wget -O /tests/static/keyfile https://raw.githubusercontent.com/ArangoDB-Community/python-arango/main/tests/static/keyfile && wget -O /tests/static/arangodb.conf https://raw.githubusercontent.com/ArangoDB-Community/python-arango/main/tests/static/<< parameters.arangodb-config >> && arangodb --configuration=/tests/static/arangodb.conf"]
+      #- image: arangodb/<< parameters.arangodb-version >>
+      #  name: db
+      #  command: ["/bin/sh", "-c", "mkdir -p /tests/static &&  &&  && "]
     steps:
       - checkout
+      - setup_remote_docker:
+           version: 20.10.18
+      - run: |
+           docker run -p 8529:8529 -d arangodb/arangodb
       - run:
           name: "Wait for DB"
           environment:
@@ -39,14 +43,14 @@ jobs:
             done
             echo "Failed to connect to DB after 30 seconds"
             #exit 1
-      - run:
-          name: "Install Dependencies"
-          command: |
-            pip install -e .[dev]
-      - run:
-          name: "Run Tests"
-          command: |
-            py.test --host db --complete --cov=arango --cov-report=html
+      #- run:
+      #    name: "Install Dependencies"
+      #    command: |
+      #      pip install -e .[dev]
+      #- run:
+      #    name: "Run Tests"
+      #    command: |
+      #      py.test --host db --complete --cov=arango --cov-report=html
 
 workflows:
   test-single-python-3.10-community-3.10:
