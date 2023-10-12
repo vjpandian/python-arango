@@ -16,15 +16,14 @@ jobs:
     docker:
       - image: python:<< parameters.python-version >>
         name: driver
-      #- image: arangodb/<< parameters.arangodb-version >>
-      #  name: db
-      #  command: ["/bin/sh", "-c", "mkdir -p /tests/static &&  &&  && "]
     steps:
       - checkout
       - setup_remote_docker:
            version: 20.10.18
       - run: |
-           docker run -p 8529:8529 -d arangodb/arangodb
+           ssh remote-docker \\<<EOF
+               docker run -p 8529:8529 -d arangodb/arangodb:latest
+           EOF
       - run:
           name: "Wait for DB"
           environment:
