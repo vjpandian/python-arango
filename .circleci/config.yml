@@ -22,7 +22,7 @@ jobs:
            version: 20.10.18
       - run: |
            ssh remote-docker \<<EOF
-               docker run -p 8529:8529 -d arangodb/arangodb:<< parameters.arangodb-version >>
+               docker run -p 8529:8529 -d arangodb/arangodb:latest
            EOF
       - run:
           name: install dockerize # This is a utility that will attempt to connect to a database, in place of an application for this sample.
