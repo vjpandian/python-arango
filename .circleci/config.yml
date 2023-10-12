@@ -16,23 +16,21 @@ jobs:
     docker:
       - image: python:<< parameters.python-version >>
         name: driver
+      - image: arangodb/arangodb:latest
+        name: db
+        command: |
+           echo "hello"
+           curl https://google.com
     steps:
       - checkout
-      - setup_remote_docker:
-           version: 20.10.18
-      - run: |
-           ssh remote-docker \<<EOF
-               sudo ufw allow 8529
-               sudo docker run -e ARANGO_ROOT_PASSWORD=mypwd -p 8529:8529 -d --name arangodb-instance arangodb/arangodb
-           EOF
-      - run:
-          name: install dockerize # This is a utility that will attempt to connect to a database, in place of an application for this sample.
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
-      - run:
-          name: Wait for db # If no database is found in 1 minute the job will fail.
-          command: dockerize -wait tcp://localhost:8529 -timeout 1m
+      #- setup_remote_docker:
+      #     version: 20.10.18
+      #- run: |
+      #     ssh remote-docker \<<EOF
+      #         sudo ufw allow 8529
+      #        sudo docker run -e ARANGO_ROOT_PASSWORD=mypwd -p 8529:8529 -d --name arangodb-instance arangodb/arangodb
+      #     EOF
+      - run: nc -vz localhost 8529
 
 
 workflows:
