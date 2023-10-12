@@ -1,0 +1,57 @@
+version: 2.1
+
+jobs:
+  run-tests:
+    resource_class: small
+    parameters:
+      python-version:
+        type: string
+        default: "latest"
+      arangodb-version:
+        type: string
+        default: "arangodb:latest"
+      arangodb-config:
+        type: string
+        default: "single.conf"
+    docker:
+      - image: python:<< parameters.python-version >>
+        name: driver
+      - image: arangodb/<< parameters.arangodb-version >>
+        name: db
+        command: ["/bin/sh", "-c", "mkdir -p /tests/static && wget -O /tests/static/keyfile https://raw.githubusercontent.com/ArangoDB-Community/python-arango/main/tests/static/keyfile && wget -O /tests/static/arangodb.conf https://raw.githubusercontent.com/ArangoDB-Community/python-arango/main/tests/static/<< parameters.arangodb-config >> && arangodb --configuration=/tests/static/arangodb.conf"]
+    steps:
+      - checkout
+      - run:
+          name: "Wait for DB"
+          environment:
+            ARANGO_HOST: "http://db:8529"
+          command: |
+            for i in {1..30}
+            do
+              #python tests/utils/ping.py
+              #if [[ $? -eq 0 ]]; then
+              #  echo "DB is up and running"
+              #  exit 0
+              #else
+              #  echo "Attempt $i failed, retrying..."
+              sleep 1
+              #fi
+            done
+            echo "Failed to connect to DB after 30 seconds"
+            #exit 1
+      - run:
+          name: "Install Dependencies"
+          command: |
+            pip install -e .[dev]
+      - run:
+          name: "Run Tests"
+          command: |
+            py.test --host db --complete --cov=arango --cov-report=html
+
+workflows:
+  test-single-python-3.10-community-3.10:
+    jobs:
+      - run-tests:
+          python-version: "3.10.6"
+          arangodb-version: "arangodb:3.10.9" # "arangodb/arangodb:3.10.10"
+          arangodb-config: "single.conf"
