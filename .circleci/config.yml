@@ -22,34 +22,17 @@ jobs:
            version: 20.10.18
       - run: |
            ssh remote-docker \<<EOF
-               docker run -p 8529:8529 -d arangodb/arangodb:latest
+               docker run -p 8529:8529 -d arangodb/arangodb:<< parameters.arangodb-version >>
            EOF
       - run:
-          name: "Wait for DB"
+          name: install dockerize # This is a utility that will attempt to connect to a database, in place of an application for this sample.
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
           environment:
-            ARANGO_HOST: "http://db:8529"
-          command: |
-            for i in {1..30}
-            do
-              #python tests/utils/ping.py
-              #if [[ $? -eq 0 ]]; then
-              #  echo "DB is up and running"
-              #  exit 0
-              #else
-              #  echo "Attempt $i failed, retrying..."
-              sleep 1
-              #fi
-            done
-            echo "Failed to connect to DB after 30 seconds"
-            #exit 1
-      #- run:
-      #    name: "Install Dependencies"
-      #    command: |
-      #      pip install -e .[dev]
-      #- run:
-      #    name: "Run Tests"
-      #    command: |
-      #      py.test --host db --complete --cov=arango --cov-report=html
+            DOCKERIZE_VERSION: v0.3.0
+      - run:
+          name: Wait for db # If no database is found in 1 minute the job will fail.
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
 
 workflows:
   test-single-python-3.10-community-3.10:
