@@ -21,7 +21,7 @@ jobs:
       - setup_remote_docker:
            version: 20.10.18
       - run: |
-           ssh remote-docker \\<<EOF
+           ssh remote-docker \<<EOF
                docker run -p 8529:8529 -d arangodb/arangodb:latest
            EOF
       - run:
