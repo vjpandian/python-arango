@@ -16,20 +16,18 @@ jobs:
              git clone https://github.com/CircleCI-Public/circleci-demo-docker
              echo "can do more things here"
              docker run -e ARANGO_ROOT_PASSWORD=test123 -p 8529:8529 -d arangodb
-      #- run: 
-      #    name: allow container to start fully in the background
-      #    command: sleep 25
-      - run:
-          name: Run a simple healthcheck to confirm db is working
-          command: | 
-            DB_URL="http://localhost:8529/_db/_system/_admin/aardvark/index.html"
-            HTTP_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" $DB_URL)
-            if [ "$HTTP_STATUS_CODE" -eq 200 ]; then
+             DB_URL="http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html"
+             HTTP_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" $DB_URL)
+             if [ "$HTTP_STATUS_CODE" -eq 200 ]; then
                   echo "DB is running..."
-              else
+             else
                    echo "Something is wrong...DB is not running"
                    exit 1
-            fi
+             fi
+      - run:
+          name: do normal things within the container...
+          command: jq --version
+            
 
 
 
