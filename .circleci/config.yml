@@ -20,7 +20,7 @@ jobs:
       - run:
           name: Run a simple healthcheck to confirm db is working
           command: | 
-            http_status=(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html#login)
+            http_status=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html#login)
             if [ "$http_status" -ne 200 ]; then
                   echo "DB is not running...fail the build"
                   exit 1
