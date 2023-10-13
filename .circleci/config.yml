@@ -2,43 +2,25 @@ version: 2.1
 
 jobs:
   run-tests:
-    resource_class: small
-    parameters:
-      python-version:
-        type: string
-        default: "latest"
-      arangodb-version:
-        type: string
-        default: "arangodb:latest"
-      arangodb-config:
-        type: string
-        default: "single.conf"
-    docker:
-      - image: cimg/base:stable
-        name: driver
-      - image: arangodb/arangodb:latest
-        name: db
-        command: |
-           mkdir -p /tests/static
-           wget -O /tests/static/keyfile https://raw.githubusercontent.com/ArangoDB-Community/python-arango/main/tests/static/keyfile
-           wget -O /tests/static/arangodb.conf https://raw.githubusercontent.com/ArangoDB-Community/python-arango/main/tests/static/single.conf 
-           arangodb --configuration=/tests/static/arangodb.conf
+    machine: 
+       image: ubuntu-2204:current
     steps:
       - checkout
       - run:
-          name: install dockerize # This is a utility that will attempt to connect to a database, in place of an application for this sample.
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
+          name: start the ArangoDB in the background
+          command: |
+             echo "more commands can be added here since we now have full access to this machine"
+             git clone https://github.com/arangodb/arangodb.git
+             docker run -e ARANGO_ROOT_PASSWORD=test123 -p 8529:8529 -d arangodb
+      #- run: 
+      #    name: allow container to start fully in the background
+      #    command: sleep 25
       - run:
-          name: Wait for db # If no database is found in 1 minute the job will fail.
-          command: dockerize -wait tcp://localhost:8529 -timeout 1m
+          name: Run a simple healthcheck to confirm db is working
+          command: curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html#login
 
 
 workflows:
-  test-single-python-3.10-community-3.10:
+  main:
     jobs:
-      - run-tests:
-          python-version: "3.10.6"
-          arangodb-version: "arangodb:3.10.9" # "arangodb/arangodb:3.10.10"
-          arangodb-config: "single.conf"
+      - run-tests
