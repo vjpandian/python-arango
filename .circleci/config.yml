@@ -25,11 +25,7 @@ jobs:
           command: | 
               url="http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html"
               response_code=$(curl -s -o /dev/null -w "%{http_code}" $url)
-              if [ "$response_code" -eq 200 ]; then
-                  echo "URL $url returned a 200 OK status code."
-              else
-                  echo "URL $url returned a non-200 status code: $response_code"
-              fi
+              echo $response_code
 
 
 
