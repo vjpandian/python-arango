@@ -2,10 +2,13 @@ version: 2.1
 
 jobs:
   run-tests:
-    machine: 
-       image: ubuntu-2204:current
+    #machine: 
+    #   image: ubuntu-2204:current
+    docker:
+      - image: cimg/base:stable
     steps:
       - checkout
+      - setup_remote_docker
       - run:
           name: start the ArangoDB in the background
           background: true
