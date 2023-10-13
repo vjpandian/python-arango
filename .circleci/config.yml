@@ -23,15 +23,15 @@ jobs:
       - run:
           name: Run a simple healthcheck to confirm db is working
           command: | 
-            curl https://google.com
-            #DB_URL="http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html"
-            #HTTP_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" $DB_URL)
-            #if [ "$HTTP_STATUS_CODE" -eq 200 ]; then
-            #      echo "DB is running..."
-            #  else
-            #       echo "Something is wrong...DB is not running"
-            #       exit 1
-            #fi
+            #curl https://google.com
+            DB_URL="http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html"
+            HTTP_STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" $DB_URL)
+            if [ "$HTTP_STATUS_CODE" -eq 200 ]; then
+                  echo "DB is running..."
+            else
+                   echo "Something is wrong...DB is not running"
+                   exit 1
+            fi
 
 
 workflows:
