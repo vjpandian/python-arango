@@ -8,16 +8,24 @@ jobs:
       - checkout
       - run:
           name: start the ArangoDB in the background
+          background: true
           command: |
              echo "more commands can be added here since we now have full access to this machine"
-             git clone https://github.com/arangodb/arangodb.git
+             git clone https://github.com/CircleCI-Public/hello-world-orb
+             echo "can do more things here"
              docker run -e ARANGO_ROOT_PASSWORD=test123 -p 8529:8529 -d arangodb
-      #- run: 
-      #    name: allow container to start fully in the background
-      #    command: sleep 25
+      - run: 
+          name: allow container to start fully in the background
+          command: sleep 25
       - run:
           name: Run a simple healthcheck to confirm db is working
-          command: curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html#login
+          command: | 
+            http_status=(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html#login)
+            if [ "$http_status" -ne 200 ]; then
+                  echo "DB is not running...fail the build"
+                  exit 1
+              else
+                   echo "Health Check was succesful..build get a green build"
 
 
 workflows:
