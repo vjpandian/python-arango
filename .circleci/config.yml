@@ -19,8 +19,10 @@ jobs:
       - image: arangodb/arangodb:latest
         name: db
         command: |
-           echo "hello"
-           curl https://google.com
+           mkdir -p /tests/static
+           wget -O /tests/static/keyfile https://raw.githubusercontent.com/ArangoDB-Community/python-arango/main/tests/static/keyfile
+           wget -O /tests/static/arangodb.conf https://raw.githubusercontent.com/ArangoDB-Community/python-arango/main/tests/static/single.conf 
+           arangodb --configuration=/tests/static/arangodb.conf
     steps:
       - checkout
       - run:
