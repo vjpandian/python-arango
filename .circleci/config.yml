@@ -17,7 +17,6 @@ jobs:
              echo "can do more things here"
              docker run -e ARANGO_ROOT_PASSWORD=test123 -p 8529:8529 -d arangodb
              DB_URL="http://127.0.0.1:8529/_db/_system/_admin/aardvark/index.html"
-             curl $DOCKER_HOST
              curl $DOCKER_MACHINE_NAME
       - run:
           name: do normal things within the container...
