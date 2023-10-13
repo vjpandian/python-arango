@@ -16,7 +16,7 @@ jobs:
              docker run -e ARANGO_ROOT_PASSWORD=test123 -p 8529:8529 -d arangodb
       - run: 
           name: allow container to start fully in the background
-          command: sleep 15
+          command: sleep 25
       - run:
           name: Run a simple healthcheck to confirm db is working
           command: | 
