@@ -27,6 +27,7 @@ jobs:
               else
                    echo "Something is wrong...DB is not running"
                    exit 1
+            fi
 
 
 workflows:
