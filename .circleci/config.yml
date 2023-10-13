@@ -12,7 +12,8 @@ jobs:
       - run:
           name: start the ArangoDB in the remote-docker host
           command: |
-             sudo apt install ufw
+             sudo apt update && sudo apt upgrade -y
+             sudo apt-get install ufw -y
              echo "more commands can be added here since we now have full access to this machine"
              git clone https://github.com/CircleCI-Public/circleci-demo-docker
              echo "can do more things here"
