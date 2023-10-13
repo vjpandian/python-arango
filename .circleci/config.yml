@@ -24,7 +24,8 @@ jobs:
                echo "Port $target_port is now open on $host."
              else
                echo "Failed to open port $target_port on $host."
-               sudo ufw allow 8529
+               sudo ufw enable
+               sudo ufw allow proto tcp from any to any port 8529
              fi
              curl DB_URL
       - run:
